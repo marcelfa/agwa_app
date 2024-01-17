@@ -29,18 +29,21 @@ const OrderPage: React.FC = () => {
 
         {/* Exit button */}
         <TouchableOpacity onPress={handleExitPress} style={styles.exitButton}>
-          <Text style={styles.exitButtonText}>X</Text>
+          <Text style= {{ fontSize: 20 }}>X</Text>
         </TouchableOpacity>
       </View>
 
       {/* Content */}
       <View style={styles.content}>
+        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>Your next order</Text>
         <Text style={{ fontSize: 20 }}>The monthly plants order consists of 5 plants.
         Changes to your next order can be made until the end of [month-current].
         This order will be shipped on the beginning of [month - next].</Text>
-        <Text style={{ fontSize: 20 }}>your selected plants:</Text>
         </View>
-        
+
+        <View style={styles.subTitle}>
+        <Text style={{ fontSize: 25 }}>your selected plants:</Text>
+        </View>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         {mockProducts.map((product) => (
           <View key={product.id} style={styles.productContainer}>
@@ -71,26 +74,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: 40,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
   },
-  exitButton: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-  },
-  exitButtonText: {
-    fontSize: 20,
+  subTitle:{ 
+    alignItems: 'baseline',
+    marginRight: 150,
+    flex: 1,
     fontWeight: 'bold',
+  
   },
+  exitButton: { 
+    top: 0,
+    left: 150,
+  },
+
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'baseline',
-    // Add additional styles for content if needed
+    marginRight: 10 
   },
   saveChangesButton: {
     position: 'absolute',
@@ -101,6 +107,7 @@ const styles = StyleSheet.create({
   productContainer: {
     marginRight: 10,
     marginBottom: 10,
+    marginTop: 10,
     padding: 10,
     borderWidth: 1,
     borderColor: '#ccc',
