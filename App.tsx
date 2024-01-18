@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Button, Image, ScrollView } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 
-const mockProducts = [
+const mockSelectedPlants = [
   { id: 'cucumber_iznik', name: 'Cucumber - Iznik', image: 'https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/images/vegetables/iznik@3x.jpg' },
   { id: 'tomato_sunrise', name: 'Tomato - Sunrise', image: 'https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/images/vegetables/tomato_sunrise@3x.jpg' },
   { id: 'tomato_bigdena', name: 'Tomato - Bigdena', image: 'https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/images/vegetables/bigdena@3x.jpg' },
@@ -68,15 +68,16 @@ const OrderPage: React.FC = () => {
         <Text style={{ fontSize: 25 }}>your selected plants:</Text>
         </View>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-        {plants.map((plant) => (
-          <View key={plant.id} style={styles.productContainer}>
+        {mockSelectedPlants.map((product) => (
+          <View key={product.id} style={styles.categoryContent}>
               {/* Product Image */}
-              <Image source={{ uri: 'https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/images/vegetables/'+plant.imageId+'@3x.jpg' }} style={styles.productImage} />
+              <Image source={{ uri: product.image }} style={styles.productImage} />
 
-            <Text style={styles.productName}>{plant.name}</Text>
+            <Text style={styles.productName}>{product.name}</Text>
            
           </View>
         ))}
+        
       </ScrollView>
 
       {/* Category container with collapsible accordion */}
@@ -87,12 +88,12 @@ const OrderPage: React.FC = () => {
       <Collapsible collapsed={isCategoryCollapsed}>
         {/* Add products for the category here - need to be enhanced to get category products */}
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-        {mockProducts.map((product) => (
-          <View key={product.id} style={styles.categoryContent}>
+        {plants.map((plant) => (
+          <View key={plant.id} style={styles.productContainer}>
               {/* Product Image */}
-              <Image source={{ uri: product.image }} style={styles.productImage} />
+              <Image source={{ uri: 'https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/images/vegetables/'+plant.imageId+'@3x.jpg' }} style={styles.productImage} />
 
-            <Text style={styles.productName}>{product.name}</Text>
+            <Text style={styles.productName}>{plant.name}</Text>
            
           </View>
         ))}
@@ -129,13 +130,11 @@ const styles = StyleSheet.create({
     marginRight: 150,
     flex: 1,
     fontWeight: 'bold',
-  
   },
   exitButton: { 
     top: 0,
     left: 150,
   },
-
   content: {
     flex: 1,
     justifyContent: 'center',
@@ -143,8 +142,7 @@ const styles = StyleSheet.create({
     marginRight: 10 
   },
   saveChangesButton: {
-    position: 'absolute',
-    bottom: 16,
+    bottom: 0,
     left: 0,
     right: 0,
   },
@@ -194,7 +192,6 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     alignItems: 'center'
-    
   },
 });
 
