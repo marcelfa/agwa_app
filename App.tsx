@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Button, Image, ScrollView } from 'react-native';
+import Collapsible from 'react-native-collapsible';
 
 const mockProducts = [
   { id: 'cucumber_iznik', name: 'Cucumber - Iznik', image: 'https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/images/vegetables/iznik@3x.jpg' },
@@ -19,6 +21,8 @@ const OrderPage: React.FC = () => {
     console.log('Save Changes button pressed');
     // to add save changes logic here
   };
+
+  const [isCategoryCollapsed, setIsCategoryCollapsed] = useState(true);
 
   return (
     <View style={styles.container}>
@@ -55,6 +59,27 @@ const OrderPage: React.FC = () => {
           </View>
         ))}
       </ScrollView>
+
+      {/* Category container with collapsible accordion */}
+      <View>
+      <TouchableOpacity onPress={() => setIsCategoryCollapsed(!isCategoryCollapsed)} style={styles.categoryHeader}>
+        <Text style={styles.categoryHeaderText}>Category</Text>
+      </TouchableOpacity>
+      <Collapsible collapsed={isCategoryCollapsed}>
+        {/* Add products for the category here - need to be enhanced to get category products */}
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+        {mockProducts.map((product) => (
+          <View key={product.id} style={styles.categoryContent}>
+              {/* Product Image */}
+              <Image source={{ uri: product.image }} style={styles.productImage} />
+
+            <Text style={styles.productName}>{product.name}</Text>
+           
+          </View>
+        ))}
+      </ScrollView>
+      </Collapsible>
+      </View>
 
       {/* Save Changes button */}
       <View style={styles.saveChangesButton}>
@@ -125,6 +150,32 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 5,
     marginBottom: 10
+  },
+  background: {
+    backgroundColor: '#f0f8ff'
+  },
+  categoryHeader: {
+    backgroundColor: '#e0e0e0',
+    padding: 10,
+    marginBottom: 10,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  categoryHeaderText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  categoryContent: {
+    marginBottom: 10,
+    marginTop: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    width: 70,
+    height: 70,
+    alignItems: 'center'
+    
   },
 });
 
