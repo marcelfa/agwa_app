@@ -10,6 +10,7 @@ const mockSelectedPlants = [
   { id: 'arugula_esmee', name: 'Arugula - Esmee', image: 'https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/images/vegetables/arugula_esmee@3x.jpg' },
 ];
 
+const maxSelection = 5;
 
 const OrderPage: React.FC = () => {
   const handleExitPress = () => {
@@ -22,13 +23,18 @@ const OrderPage: React.FC = () => {
     console.log('Save Changes button pressed');
     // to add save changes logic here
   };
+  const handleRemoveItem = () => {
+    console.log('remove item button pressed');
+    // to add remove button logic here
+  };
 
   const [isCategoryCollapsed, setIsCategoryCollapsed] = useState(true);
   const [plants, setPlants] =useState<Plant[]>([]);
+  const [categories, setCategories] =useState<Category[]>([]);
 
   useEffect(() => {
     // Fetch products from a JSON file or API response
-    const fetchData = async () => {
+    const fetchPlantsData = async () => {
       try {
         const response = await fetch('https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/data/catalogs/plants.json');
         const data: Plants = await response.json();
@@ -36,12 +42,29 @@ const OrderPage: React.FC = () => {
         console.log("response: " ,response)
         console.log(data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching plants data:', error);
       }
     };
 
-    fetchData();
+    const fetchCategoriesData = async () => {
+      try {
+        const response = await fetch('https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/data/catalogs/agwafarm.json');
+        const data = await response.json();
+        setCategories(data.categories);
+      } catch (error) {
+        console.error('Error fetching categories data:', error);
+      }
+    };
+
+    fetchPlantsData();
+    fetchCategoriesData();
   }, []); // Run only once when the component mounts
+
+  
+  const getImageIdByPlantId = (plantId: string) => {
+    const plant = plants.find((p) => p.id === plantId);
+    return plant ? plant.imageId : null;
+  };
 
   return (
     <View style={styles.container}>
@@ -59,7 +82,7 @@ const OrderPage: React.FC = () => {
       {/* Content */}
       <View style={styles.content}>
         <Text style={{ fontSize: 25, fontWeight: 'bold' }}>Your next order</Text>
-        <Text style={{ fontSize: 20 }}>The monthly plants order consists of 5 plants.
+        <Text style={{ fontSize: 20 }}>The monthly plants order consists of {maxSelection} plants.
         Changes to your next order can be made until the end of [month-current].
         This order will be shipped on the beginning of [month - next].</Text>
         </View>
@@ -69,11 +92,15 @@ const OrderPage: React.FC = () => {
         </View>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         {mockSelectedPlants.map((product) => (
-          <View key={product.id} style={styles.categoryContent}>
+          <View key={product.id} style={styles.productContainer}>
               {/* Product Image */}
               <Image source={{ uri: product.image }} style={styles.productImage} />
 
             <Text style={styles.productName}>{product.name}</Text>
+            <View>
+            <Button title="-" onPress={() => handleRemoveItem()} 
+            color="#ccc" />
+            </View>
            
           </View>
         ))}
@@ -81,20 +108,17 @@ const OrderPage: React.FC = () => {
       </ScrollView>
 
       {/* Category container with collapsible accordion */}
-      <View>
+      <View style={styles.categoryContent}>
       <TouchableOpacity onPress={() => setIsCategoryCollapsed(!isCategoryCollapsed)} style={styles.categoryHeader}>
-        <Text style={styles.categoryHeaderText}>Category</Text>
+        <Text style={styles.categoryHeaderText}>[{categories.at(0)?.name}]</Text>
       </TouchableOpacity>
       <Collapsible collapsed={isCategoryCollapsed}>
-        {/* Add products for the category here - need to be enhanced to get category products */}
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-        {plants.map((plant) => (
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={true}>
+        {categories.at(0)?.plants.map((plant) => (
           <View key={plant.id} style={styles.productContainer}>
               {/* Product Image */}
-              <Image source={{ uri: 'https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/images/vegetables/'+plant.imageId+'@3x.jpg' }} style={styles.productImage} />
-
+              <Image source={{ uri: 'https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/images/vegetables/'+getImageIdByPlantId(plant.id)+'@3x.jpg' }} style={styles.productImage} />
             <Text style={styles.productName}>{plant.name}</Text>
-           
           </View>
         ))}
       </ScrollView>
@@ -172,27 +196,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f8ff'
   },
   categoryHeader: {
-    backgroundColor: '#e0e0e0',
     padding: 10,
     marginBottom: 10,
     marginTop: 10,
     alignItems: 'center',
+    backgroundColor: '#f0f8ff'
   },
   categoryHeaderText: {
     fontSize: 18,
     fontWeight: 'bold',
   },
   categoryContent: {
-    marginBottom: 10,
-    marginTop: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    width: 70,
-    height: 70,
-    alignItems: 'center'
-  },
+    backgroundColor: '#f0f8ff'
+  }
 });
 
 export default OrderPage;
