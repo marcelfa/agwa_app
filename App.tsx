@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Button, Image, ScrollView } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 
@@ -9,6 +9,7 @@ const mockProducts = [
   { id: 'tomato_beorange', name: 'Tomato - Beorange', image: 'https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/images/vegetables/beorange@3x.jpg' },
   { id: 'arugula_esmee', name: 'Arugula - Esmee', image: 'https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/images/vegetables/arugula_esmee@3x.jpg' },
 ];
+
 
 const OrderPage: React.FC = () => {
   const handleExitPress = () => {
@@ -23,6 +24,24 @@ const OrderPage: React.FC = () => {
   };
 
   const [isCategoryCollapsed, setIsCategoryCollapsed] = useState(true);
+  const [plants, setPlants] =useState<Plant[]>([]);
+
+  useEffect(() => {
+    // Fetch products from a JSON file or API response
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/data/catalogs/plants.json');
+        const data: Plants = await response.json();
+        setPlants(data.plants);
+        console.log("response: " ,response)
+        console.log(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []); // Run only once when the component mounts
 
   return (
     <View style={styles.container}>
@@ -49,12 +68,12 @@ const OrderPage: React.FC = () => {
         <Text style={{ fontSize: 25 }}>your selected plants:</Text>
         </View>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-        {mockProducts.map((product) => (
-          <View key={product.id} style={styles.productContainer}>
+        {plants.map((plant) => (
+          <View key={plant.id} style={styles.productContainer}>
               {/* Product Image */}
-              <Image source={{ uri: product.image }} style={styles.productImage} />
+              <Image source={{ uri: 'https://dev-agwa-public-static-assets-web.s3-us-west-2.amazonaws.com/images/vegetables/'+plant.imageId+'@3x.jpg' }} style={styles.productImage} />
 
-            <Text style={styles.productName}>{product.name}</Text>
+            <Text style={styles.productName}>{plant.name}</Text>
            
           </View>
         ))}
